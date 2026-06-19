@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:multiavatar/multiavatar.dart';
 
 void main() {
@@ -11,11 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MultiAvatar exemple',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'MultiAvatar Exemple'),
+      title: 'MultiAvatar example',
+      theme: ThemeData.from(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+      home: MyHomePage(title: 'MultiAvatar example'),
     );
   }
 }
@@ -30,38 +31,69 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  TextEditingController _controller = TextEditingController();
+  String _avatarSvg = '';
+  void _generateAvatar() {
+    ///The svg code
+    log(multiavatar(DateTime.now().toIso8601String()));
+    setState(() {
+      _avatarSvg = multiavatar(DateTime.now().toIso8601String());
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _generateAvatar();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _generateAvatar,
+        tooltip: 'Generate',
+        icon: Icon(Icons.gesture),
+        label: Text('Generate'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FloatingActionButton(
-              onPressed: () {
-                ///The svg code
-                log(multiavatar(DateTime.now().toIso8601String()));
-                setState(() {
-                  _controller.text =
-                      multiavatar(DateTime.now().toIso8601String());
-                });
-              },
-              tooltip: 'Generate',
-              child: Icon(Icons.gesture),
+            SvgPicture.string(
+              _avatarSvg,
+              height: 200,
+              width: 200,
             ),
             SizedBox(height: 20),
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                filled: true,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  highlightColor: Colors.deepPurple.withValues(alpha: 0.1),
+                  overlayColor: WidgetStateProperty.all(
+                      Colors.deepPurple.withValues(alpha: 0.1)),
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: _avatarSvg));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('SVG code copied to clipboard')),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(_avatarSvg, textAlign: TextAlign.center),
+                  ),
+                ),
               ),
-              maxLines: 20,
-            )
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ),
