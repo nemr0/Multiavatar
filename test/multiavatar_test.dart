@@ -26,5 +26,54 @@ void main() {
         svgNoBgXSlayer,
       );
     });
+
+    test('Empty string returns empty output', () {
+      expect(multiavatar(''), '');
+    });
+
+    test('Same seed is deterministic', () {
+      expect(multiavatar('Pixelium'), multiavatar('Pixelium'));
+    });
+
+    test('Different seeds produce different avatars', () {
+      expect(multiavatar('Pixelium'), isNot(multiavatar('X-SLAYER')));
+    });
+
+    test('Output is a well-formed svg', () {
+      final svg = multiavatar('Pixelium');
+      expect(svg, startsWith('<svg'));
+      expect(svg, endsWith('</svg>'));
+    });
+
+    test('Transparent background omits the environment fill', () {
+      final withBg = multiavatar('Pixelium');
+      final noBg = multiavatar('Pixelium', transparentBackground: true);
+      // The transparent variant is the same avatar minus the background block.
+      expect(noBg.length, lessThan(withBg.length));
+      expect(noBg, startsWith('<svg'));
+    });
+
+    group('Gender', () {
+      test('[f] prefix equals female gender on the stripped seed', () {
+        expect(
+          multiavatar('[f]Pixelium'),
+          multiavatar('Pixelium', gender: GenderType.female),
+        );
+      });
+
+      test('[m] prefix equals male gender on the stripped seed', () {
+        expect(
+          multiavatar('[m]Pixelium'),
+          multiavatar('Pixelium', gender: GenderType.male),
+        );
+      });
+
+      test('Gendered variants are still deterministic', () {
+        expect(
+          multiavatar('Pixelium', gender: GenderType.male),
+          multiavatar('Pixelium', gender: GenderType.male),
+        );
+      });
+    });
   });
 }
