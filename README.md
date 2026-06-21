@@ -6,7 +6,7 @@
 > [`multiavatar`](https://pub.dev/packages/multiavatar) package
 > ([X-SLAYER/Multiavatar](https://github.com/X-SLAYER/Multiavatar)), which is no
 > longer being updated. Same API, kept current with recent Flutter/Dart SDKs.
-> Published from [nemr0/Multiavatar](https://github.com/nemr0/Multiavatar).
+> Published from [nemr0/multiavatar_plus](https://github.com/nemr0/multiavatar_plus).
 
 Flutter Wrapper for [Multiavatar](https://multiavatar.com)
 
