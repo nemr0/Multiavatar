@@ -1,3 +1,7 @@
+/// Generates unique, deterministic SVG avatars from any string.
+///
+/// Call [multiavatar] with a seed string (a username, email, or id) to get
+/// back the SVG markup for that seed's avatar.
 library multiavatar;
 
 import 'dart:convert';
@@ -940,8 +944,17 @@ Map<String, Map<String, String>> _buildParts() {
 
 enum GenderType { male, female, neutral }
 
-/// [gender] constrains mouth/top parts. [GenderType.neutral] (default) applies
-/// no filtering. A '[m]' / '[f]' prefix on [string] overrides [gender].
+/// Returns the SVG markup for the avatar derived from [string].
+///
+/// The same [string] always produces the same avatar. Returns an empty string
+/// when [string] is empty.
+///
+/// Set [transparentBackground] to `true` to omit the circular background.
+///
+/// [gender] constrains the mouth and top (hair) parts. [GenderType.neutral]
+/// (the default) applies no filtering. A `[m]` or `[f]` prefix on [string]
+/// overrides [gender] and is stripped before hashing, so `multiavatar('[f]ada')`
+/// and `multiavatar('ada', gender: GenderType.female)` are equivalent.
 String multiavatar(String string,
     {bool transparentBackground = false,
     GenderType gender = GenderType.neutral}) {
